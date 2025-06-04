@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.facebook",
     "a_home",
     "a_user",
+    "django_celery_results",
 ]
 
 MIDDLEWARE = [
@@ -216,6 +217,15 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = f"Awesome {EMAIL_HOST_USER}"
 
 ACCOUNT_EMAIL_SUBJECT_PREFIX = ""
+
+
+# CELERY CONFIGURATION.
+
+CELERY_BROKER_URL = env("BROKER_URL")
+
+CELERY_RESULT_BACKEND = "django-db"
+
+CELERY_RESULT_EXTENDED = True
 
 
 # ADDITIONAL CONFIGURATION.

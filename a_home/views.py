@@ -3,6 +3,13 @@ from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from .models import Message, Subscriber
 from .forms import MessageCreateForm, SubscriberCreateForm
+from .tasks import send_email_task
+
+
+def send_email(message: str):
+    subject = "New Message"
+    emails = [subscriber.email for subscriber in Subscriber.objects.all()]
+    send_email_task.delay(subject, message, emails)
 
 
 def home_view(request: HttpRequest):
@@ -16,7 +23,8 @@ def home_view(request: HttpRequest):
         if is_message:
             form = MessageCreateForm(request.POST)
             if form.is_valid():
-                form.save()
+                message = form.save()
+                send_email(message.content)
             else:
                 messages.error(request, "Opps! Something went wrong.")
         else:
